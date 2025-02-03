@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Navigation from "./Navigation";
+import Header from "./Header";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <Navigation />
       
       <main className="lg:ml-64 p-6">

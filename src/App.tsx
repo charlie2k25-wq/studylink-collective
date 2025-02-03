@@ -24,6 +24,9 @@ const App = () => (
             <Route path="/podcasts" element={<Podcasts />} />
             <Route path="/library" element={<Library />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/forum" element={<NotFound />} />
+            <Route path="/store" element={<NotFound />} />
+            <Route path="/downloads" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
