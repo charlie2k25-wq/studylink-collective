@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MessageSquare, ShoppingCart, Search, Download, Menu, X } from "lucide-react";
+import { MessageSquare, ShoppingCart, Search, Download, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Sheet,
