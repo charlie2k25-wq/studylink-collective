@@ -27,6 +27,8 @@ const App = () => (
             <Route path="/forum" element={<NotFound />} />
             <Route path="/store" element={<NotFound />} />
             <Route path="/downloads" element={<NotFound />} />
+            <Route path="/study-groups" element={<NotFound />} />
+            <Route path="/notifications" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

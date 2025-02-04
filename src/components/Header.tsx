@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { MessageSquare, ShoppingCart, Search, Download, Menu, X } from "lucide-react";
+import { MessageSquare, ShoppingCart, Search, Download, Menu, X, Users, Bell } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Sheet,
@@ -21,6 +21,8 @@ const Header = () => {
     { path: "/forum", label: "Forum", icon: MessageSquare },
     { path: "/store", label: "Store", icon: ShoppingCart },
     { path: "/downloads", label: "Downloads", icon: Download },
+    { path: "/study-groups", label: "Study Groups", icon: Users },
+    { path: "/notifications", label: "Notifications", icon: Bell },
   ];
 
   const isActive = (path: string) => location.pathname === path;
