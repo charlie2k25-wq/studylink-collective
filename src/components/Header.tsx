@@ -68,19 +68,20 @@ const Header = () => {
         </Sheet>
 
         <div className="flex flex-1 items-center justify-between space-x-2">
-          <div className={cn("flex-1", isSearchVisible ? "block" : "hidden md:block")}>
+          {/* Search bar */}
+          <div className={cn("flex-1", isSearchVisible ? "block" : "hidden")}>
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search..."
-                className="pl-8 md:w-[200px] lg:w-[300px]"
+                className="pl-8 w-full"
               />
             </div>
           </div>
 
-          {/* App bar items */}
-          <div className="flex items-center space-x-2">
-            {appBarItems.map(({ path, icon: Icon }) => (
+          {/* App bar items and search toggle */}
+          <div className="flex items-center ml-auto">
+            {!isSearchVisible && appBarItems.map(({ path, icon: Icon }) => (
               <Link
                 key={path}
                 to={path}
@@ -97,6 +98,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
+              className="ml-2"
               onClick={() => setIsSearchVisible(!isSearchVisible)}
             >
               {isSearchVisible ? (

@@ -8,6 +8,9 @@ import Index from "./pages/Index";
 import Podcasts from "./pages/Podcasts";
 import Library from "./pages/Library";
 import Settings from "./pages/Settings";
+import Store from "./pages/Store";
+import StudyGroups from "./pages/StudyGroups";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,10 +28,10 @@ const App = () => (
             <Route path="/library" element={<Library />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/forum" element={<NotFound />} />
-            <Route path="/store" element={<NotFound />} />
+            <Route path="/store" element={<Store />} />
             <Route path="/downloads" element={<NotFound />} />
-            <Route path="/study-groups" element={<NotFound />} />
-            <Route path="/notifications" element={<NotFound />} />
+            <Route path="/study-groups" element={<StudyGroups />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
