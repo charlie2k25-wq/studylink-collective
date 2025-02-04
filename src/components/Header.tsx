@@ -17,10 +17,15 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
+  // Navigation items for the side menu
   const navigationItems = [
     { path: "/forum", label: "Forum", icon: MessageSquare },
-    { path: "/store", label: "Store", icon: ShoppingCart },
     { path: "/downloads", label: "Downloads", icon: Download },
+  ];
+
+  // App bar items
+  const appBarItems = [
+    { path: "/store", label: "Store", icon: ShoppingCart },
     { path: "/study-groups", label: "Study Groups", icon: Users },
     { path: "/notifications", label: "Notifications", icon: Bell },
   ];
@@ -30,32 +35,8 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Link to="/" className="mr-6 flex items-center space-x-2">
-            <span className="hidden font-bold sm:inline-block">
-              Learning Platform
-            </span>
-          </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
-            {navigationItems.map(({ path, label }) => (
-              <Link
-                key={path}
-                to={path}
-                className={cn(
-                  "transition-colors hover:text-foreground/80",
-                  isActive(path)
-                    ? "text-foreground"
-                    : "text-foreground/60"
-                )}
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-
         <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-          <SheetTrigger asChild className="md:hidden">
+          <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="mr-2">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
@@ -86,8 +67,8 @@ const Header = () => {
           </SheetContent>
         </Sheet>
 
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className={cn("flex-1 md:flex-none", isSearchVisible ? "block" : "hidden md:block")}>
+        <div className="flex flex-1 items-center justify-between space-x-2">
+          <div className={cn("flex-1", isSearchVisible ? "block" : "hidden md:block")}>
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
@@ -96,19 +77,36 @@ const Header = () => {
               />
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setIsSearchVisible(!isSearchVisible)}
-          >
-            {isSearchVisible ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Search className="h-5 w-5" />
-            )}
-            <span className="sr-only">Toggle search</span>
-          </Button>
+
+          {/* App bar items */}
+          <div className="flex items-center space-x-2">
+            {appBarItems.map(({ path, icon: Icon }) => (
+              <Link
+                key={path}
+                to={path}
+                className={cn(
+                  "p-2",
+                  isActive(path)
+                    ? "text-foreground"
+                    : "text-foreground/60"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+              </Link>
+            ))}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsSearchVisible(!isSearchVisible)}
+            >
+              {isSearchVisible ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Search className="h-5 w-5" />
+              )}
+              <span className="sr-only">Toggle search</span>
+            </Button>
+          </div>
         </div>
       </div>
     </header>
