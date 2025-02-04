@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { MessageSquare, ShoppingCart, Search, Download, Menu } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { MessageSquare, ShoppingCart, Search, Download, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Sheet,
@@ -10,9 +10,20 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { Input } from "./ui/input";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const navigationItems = [
+    { path: "/forum", label: "Forum", icon: MessageSquare },
+    { path: "/store", label: "Store", icon: ShoppingCart },
+    { path: "/downloads", label: "Downloads", icon: Download },
+  ];
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -20,42 +31,32 @@ const Header = () => {
         <div className="mr-4 hidden md:flex">
           <Link to="/" className="mr-6 flex items-center space-x-2">
             <span className="hidden font-bold sm:inline-block">
-              StudyLink Collective
+              Learning Platform
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link
-              to="/forum"
-              className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
-            >
-              <MessageSquare className="h-4 w-4" />
-              <span>Forum</span>
-            </Link>
-            <Link
-              to="/store"
-              className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              <span>Store</span>
-            </Link>
-            <Link
-              to="/downloads"
-              className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
-            >
-              <Download className="h-4 w-4" />
-              <span>Downloads</span>
-            </Link>
+            {navigationItems.map(({ path, label }) => (
+              <Link
+                key={path}
+                to={path}
+                className={cn(
+                  "transition-colors hover:text-foreground/80",
+                  isActive(path)
+                    ? "text-foreground"
+                    : "text-foreground/60"
+                )}
+              >
+                {label}
+              </Link>
+            ))}
           </nav>
         </div>
-        
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
-            >
+
+        <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+          <SheetTrigger asChild className="md:hidden">
+            <Button variant="ghost" size="icon" className="mr-2">
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle Menu</span>
+              <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
@@ -63,54 +64,51 @@ const Header = () => {
               <SheetTitle>Navigation</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col space-y-4 mt-4">
-              <Link
-                to="/forum"
-                className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
-              >
-                <MessageSquare className="h-4 w-4" />
-                <span>Forum</span>
-              </Link>
-              <Link
-                to="/store"
-                className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                <span>Store</span>
-              </Link>
-              <Link
-                to="/downloads"
-                className="flex items-center space-x-2 text-muted-foreground hover:text-primary"
-              >
-                <Download className="h-4 w-4" />
-                <span>Downloads</span>
-              </Link>
+              {navigationItems.map(({ path, label, icon: Icon }) => (
+                <Link
+                  key={path}
+                  to={path}
+                  className={cn(
+                    "flex items-center space-x-2 text-sm font-medium",
+                    isActive(path)
+                      ? "text-foreground"
+                      : "text-foreground/60"
+                  )}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span>{label}</span>
+                </Link>
+              ))}
             </nav>
           </SheetContent>
         </Sheet>
 
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-            <Button
-              variant="ghost"
-              className="w-9 px-0"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-            >
-              <Search className="h-4 w-4" />
-              <span className="sr-only">Toggle search</span>
-            </Button>
+          <div className={cn("flex-1 md:flex-none", isSearchVisible ? "block" : "hidden md:block")}>
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search..."
+                className="pl-8 md:w-[200px] lg:w-[300px]"
+              />
+            </div>
           </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setIsSearchVisible(!isSearchVisible)}
+          >
+            {isSearchVisible ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Search className="h-5 w-5" />
+            )}
+            <span className="sr-only">Toggle search</span>
+          </Button>
         </div>
       </div>
-
-      {isSearchOpen && (
-        <div className="container py-4">
-          <Input
-            type="search"
-            placeholder="Search podcasts, books, products..."
-            className="w-full"
-          />
-        </div>
-      )}
     </header>
   );
 };
