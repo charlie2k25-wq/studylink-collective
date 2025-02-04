@@ -1,7 +1,12 @@
-import { motion } from "framer-motion";
-import { Play, Heart, Share2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play, Heart, Share2, Plus, Store, Podcast, MessageSquare } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const Index = () => {
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const [isFabOpen, setIsFabOpen] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
   const featuredPodcasts = [
     {
       id: 1,
@@ -26,8 +31,26 @@ const Index = () => {
     },
   ];
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrollingDown(currentScrollY > lastScrollY);
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
+  const fabItems = [
+    { icon: Store, label: "Add Store", action: () => console.log("Add Store clicked") },
+    { icon: Podcast, label: "Add Podcast", action: () => console.log("Add Podcast clicked") },
+    { icon: MessageSquare, label: "Create Poll", action: () => console.log("Create Poll clicked") },
+    { icon: Plus, label: "Add Update", action: () => console.log("Add Update clicked") },
+  ];
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 relative min-h-screen pb-24">
       <section className="text-center space-y-4">
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -86,6 +109,61 @@ const Index = () => {
           ))}
         </div>
       </section>
+
+      {/* Floating Action Button */}
+      <AnimatePresence>
+        {!isScrollingDown && (
+          <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed bottom-6 right-6 z-50"
+          >
+            <div className="relative">
+              {/* FAB Items */}
+              <AnimatePresence>
+                {isFabOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="absolute bottom-16 right-0 space-y-3"
+                  >
+                    {fabItems.map((item, index) => (
+                      <motion.button
+                        key={item.label}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ delay: index * 0.1 }}
+                        onClick={() => {
+                          item.action();
+                          setIsFabOpen(false);
+                        }}
+                        className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg hover:bg-primary/90 transition-colors"
+                      >
+                        <item.icon size={20} />
+                        <span>{item.label}</span>
+                      </motion.button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Main FAB Button */}
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setIsFabOpen(!isFabOpen)}
+                className={`h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-transform ${
+                  isFabOpen ? "rotate-45" : ""
+                }`}
+              >
+                <Plus size={24} />
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
