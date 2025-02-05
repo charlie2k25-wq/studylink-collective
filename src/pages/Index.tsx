@@ -12,7 +12,7 @@ const Index = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setIsScrollingDown(currentScrollY > 0);
+      setIsScrollingDown(currentScrollY > lastScrollY);
       setLastScrollY(currentScrollY);
     };
 
