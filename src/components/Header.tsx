@@ -17,13 +17,11 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  // Navigation items for the side menu
   const navigationItems = [
     { path: "/forum", label: "Forum", icon: MessageSquare },
     { path: "/downloads", label: "Downloads", icon: Download },
   ];
 
-  // App bar items
   const appBarItems = [
     { path: "/store", label: "Store", icon: ShoppingCart },
     { path: "/study-groups", label: "Study Groups", icon: Users },
@@ -67,20 +65,27 @@ const Header = () => {
           </SheetContent>
         </Sheet>
 
-        <div className="flex flex-1 items-center justify-between space-x-2">
+        {/* App Name */}
+        <div className="flex-1 text-xl font-bold">
+          {!isSearchVisible && <span>edvibe</span>}
+        </div>
+
+        <div className="flex items-center justify-end space-x-2">
           {/* Search bar */}
-          <div className={cn("flex-1", isSearchVisible ? "block" : "hidden")}>
-            <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                className="pl-8 w-full"
-              />
+          {isSearchVisible && (
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search..."
+                  className="pl-8 w-full"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* App bar items and search toggle */}
-          <div className="flex items-center ml-auto">
+          <div className="flex items-center">
             {!isSearchVisible && appBarItems.map(({ path, icon: Icon }) => (
               <Link
                 key={path}

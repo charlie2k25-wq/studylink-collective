@@ -34,7 +34,7 @@ const Index = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setIsScrollingDown(currentScrollY > lastScrollY);
+      setIsScrollingDown(currentScrollY > 0);
       setLastScrollY(currentScrollY);
     };
 
@@ -50,27 +50,8 @@ const Index = () => {
   ];
 
   return (
-    <div className="space-y-8 relative min-h-screen pb-24">
-      <section className="text-center space-y-4">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-bold"
-        >
-          Welcome to EduPod
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-muted-foreground max-w-2xl mx-auto"
-        >
-          Discover educational podcasts, join discussions, and enhance your learning journey.
-        </motion.p>
-      </section>
-
+    <div className="space-y-8 relative min-h-screen pb-16">
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Featured Podcasts</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {featuredPodcasts.map((podcast, index) => (
             <motion.div
@@ -117,7 +98,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
-            className="fixed bottom-6 right-6 z-50"
+            className="fixed bottom-20 right-6 z-50"
           >
             <div className="relative">
               {/* FAB Items */}
