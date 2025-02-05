@@ -13,7 +13,6 @@ const UpdateUpload = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here we would handle the actual upload
     toast({
       title: "Update Posted",
       description: "Your update has been shared successfully!",

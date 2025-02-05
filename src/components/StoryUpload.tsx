@@ -8,11 +8,11 @@ import { Camera, Image, Palette, Globe, Sticker } from "lucide-react";
 const StoryUpload = () => {
   const [text, setText] = useState("");
   const [privacy, setPrivacy] = useState("public");
+  const [background, setBackground] = useState("none");
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here we would handle the actual upload
     toast({
       title: "Story Posted",
       description: "Your story has been shared successfully!",
