@@ -1,11 +1,16 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Heart, Share2, Plus, Store, Podcast, MessageSquare } from "lucide-react";
+import { Play, Heart, Share2, Plus, Store, Podcast, MessageSquare, Image } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Dialog } from "@/components/ui/dialog";
+import StoryUpload from "@/components/StoryUpload";
+import UpdateUpload from "@/components/UpdateUpload";
+import PodcastUpload from "@/components/PodcastUpload";
 
 const Index = () => {
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [isFabOpen, setIsFabOpen] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [activeDialog, setActiveDialog] = useState<string | null>(null);
 
   const featuredPodcasts = [
     {
@@ -43,10 +48,38 @@ const Index = () => {
   }, [lastScrollY]);
 
   const fabItems = [
-    { icon: Store, label: "Add Store", action: () => console.log("Add Store clicked") },
-    { icon: Podcast, label: "Add Podcast", action: () => console.log("Add Podcast clicked") },
-    { icon: MessageSquare, label: "Create Poll", action: () => console.log("Create Poll clicked") },
-    { icon: Plus, label: "Add Update", action: () => console.log("Add Update clicked") },
+    { 
+      icon: Image, 
+      label: "Add Story", 
+      action: () => {
+        setActiveDialog("story");
+        setIsFabOpen(false);
+      }
+    },
+    { 
+      icon: MessageSquare, 
+      label: "Add Update", 
+      action: () => {
+        setActiveDialog("update");
+        setIsFabOpen(false);
+      }
+    },
+    { 
+      icon: Podcast, 
+      label: "Add Podcast", 
+      action: () => {
+        setActiveDialog("podcast");
+        setIsFabOpen(false);
+      }
+    },
+    { 
+      icon: Store, 
+      label: "Add Store", 
+      action: () => {
+        setActiveDialog("store");
+        setIsFabOpen(false);
+      }
+    },
   ];
 
   return (
@@ -117,10 +150,7 @@ const Index = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 20 }}
                         transition={{ delay: index * 0.1 }}
-                        onClick={() => {
-                          item.action();
-                          setIsFabOpen(false);
-                        }}
+                        onClick={item.action}
                         className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg hover:bg-primary/90 transition-colors"
                       >
                         <item.icon size={20} />
@@ -145,6 +175,34 @@ const Index = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Upload Dialogs */}
+      <Dialog open={activeDialog === "story"} onOpenChange={() => setActiveDialog(null)}>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+          <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
+            <h2 className="text-lg font-semibold">Create Story</h2>
+            <StoryUpload />
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog open={activeDialog === "update"} onOpenChange={() => setActiveDialog(null)}>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+          <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
+            <h2 className="text-lg font-semibold">Create Update</h2>
+            <UpdateUpload />
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog open={activeDialog === "podcast"} onOpenChange={() => setActiveDialog(null)}>
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm">
+          <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg">
+            <h2 className="text-lg font-semibold">Upload Podcast</h2>
+            <PodcastUpload />
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
