@@ -65,7 +65,7 @@ const FloatingActionButton = ({
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
-                  className="absolute bottom-16 right-0 space-y-3"
+                  className="absolute bottom-16 right-0 space-y-2"
                 >
                   {fabItems.map((item, index) => (
                     <motion.button
@@ -75,9 +75,9 @@ const FloatingActionButton = ({
                       exit={{ opacity: 0, y: 20 }}
                       transition={{ delay: index * 0.1 }}
                       onClick={item.action}
-                      className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg hover:bg-primary/90 transition-colors"
+                      className="flex items-center gap-2 bg-primary text-primary-foreground px-3 py-1.5 rounded-full shadow-lg hover:bg-primary/90 transition-colors text-sm"
                     >
-                      <item.icon size={20} />
+                      <item.icon size={16} />
                       <span>{item.label}</span>
                     </motion.button>
                   ))}
@@ -88,7 +88,7 @@ const FloatingActionButton = ({
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsFabOpen(!isFabOpen)}
-              className={`h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-transform ${
+              className={`h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-transform ${
                 isFabOpen ? "rotate-45" : ""
               }`}
             >
