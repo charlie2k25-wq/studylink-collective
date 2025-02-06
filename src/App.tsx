@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Podcasts from "./pages/Podcasts";
 import Library from "./pages/Library";
 import Settings from "./pages/Settings";
+import Forum from "./pages/Forum";
 import Store from "./pages/Store";
 import StudyGroups from "./pages/StudyGroups";
 import Notifications from "./pages/Notifications";
@@ -30,7 +31,7 @@ const App = () => (
             <Route path="/podcasts" element={<Podcasts />} />
             <Route path="/library" element={<Library />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="/forum" element={<NotFound />} />
+            <Route path="/forum" element={<Forum />} />
             <Route path="/store" element={<Store />} />
             <Route path="/downloads" element={<Downloads />} />
             <Route path="/study-groups" element={<StudyGroups />} />
