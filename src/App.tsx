@@ -14,6 +14,7 @@ import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import Calendar from "./pages/Calendar";
+import Downloads from "./pages/Downloads";
 
 const queryClient = new QueryClient();
 
@@ -31,7 +32,7 @@ const App = () => (
             <Route path="/settings" element={<Settings />} />
             <Route path="/forum" element={<NotFound />} />
             <Route path="/store" element={<Store />} />
-            <Route path="/downloads" element={<NotFound />} />
+            <Route path="/downloads" element={<Downloads />} />
             <Route path="/study-groups" element={<StudyGroups />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/profile" element={<Profile />} />

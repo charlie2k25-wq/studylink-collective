@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import StoryUpload from "@/components/StoryUpload";
 import UpdateUpload from "@/components/UpdateUpload";
 import PodcastUpload from "@/components/PodcastUpload";
+import PollUpload from "@/components/PollUpload";
 
 interface UploadDialogsProps {
   activeDialog: string | null;
@@ -29,6 +30,11 @@ const UploadDialogs = ({ activeDialog, onClose }: UploadDialogsProps) => {
         return {
           title: "Upload Podcast",
           component: <PodcastUpload />
+        };
+      case "poll":
+        return {
+          title: "Create Poll",
+          component: <PollUpload />
         };
       default:
         return null;

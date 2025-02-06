@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Image, MessageSquare, Podcast, Store } from "lucide-react";
+import { Plus, Image, MessageSquare, Podcast, Poll } from "lucide-react";
 
 interface FloatingActionButtonProps {
   isScrollingDown: boolean;
@@ -40,10 +40,10 @@ const FloatingActionButton = ({
       }
     },
     { 
-      icon: Store, 
-      label: "Add Store", 
+      icon: Poll, 
+      label: "Add Poll", 
       action: () => {
-        onItemClick("store");
+        onItemClick("poll");
         setIsFabOpen(false);
       }
     },
