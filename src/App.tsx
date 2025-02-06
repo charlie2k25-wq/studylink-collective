@@ -12,6 +12,8 @@ import Store from "./pages/Store";
 import StudyGroups from "./pages/StudyGroups";
 import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
+import Calendar from "./pages/Calendar";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/downloads" element={<NotFound />} />
             <Route path="/study-groups" element={<StudyGroups />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/calendar" element={<Calendar />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
