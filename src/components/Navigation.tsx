@@ -20,19 +20,19 @@ const Navigation = () => {
     <>
       {/* Mobile Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-        <nav className="glass px-6 py-4 flex justify-around items-center animate-slideUp">
+        <nav className="bg-background/95 backdrop-blur-sm border-t px-4 py-2 flex justify-around items-center">
           {navItems.map(({ icon: Icon, label, path }) => (
             <Link
               key={path}
               to={path}
-              className={`flex flex-col items-center space-y-1 transition-colors rounded-full p-3 ${
+              className={`flex flex-col items-center space-y-0.5 transition-colors rounded-full p-2 ${
                 isActive(path)
                   ? "bg-primary text-primary-foreground"
-                  : "bg-[#9b87f5] text-white hover:bg-[#7E69AB]"
+                  : "bg-[#403E43] text-white hover:bg-[#8A898C]"
               }`}
             >
-              <Icon size={20} />
-              <span className="text-xs">{label}</span>
+              <Icon size={16} />
+              <span className="text-[10px]">{label}</span>
             </Link>
           ))}
         </nav>

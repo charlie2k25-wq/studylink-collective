@@ -1,7 +1,9 @@
+
 import { useState } from "react";
-import { Download, Play, Pause } from "lucide-react";
+import { Download, Play, Pause, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { Link } from "react-router-dom";
 
 interface DownloadableContent {
   id: string;
@@ -34,8 +36,6 @@ const Downloads = () => {
   ]);
 
   const handleDownload = (content: DownloadableContent) => {
-    // In a real app, this would handle the actual download
-    // For now, we'll just show a toast and update the UI
     toast({
       title: "Download Started",
       description: `Downloading ${content.title}...`,
@@ -50,7 +50,14 @@ const Downloads = () => {
 
   return (
     <div className="space-y-6 p-4">
-      <h2 className="text-2xl font-bold">Downloads</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Downloads</h2>
+        <Link to="/settings">
+          <Button variant="outline" size="icon" className="rounded-full">
+            <Settings size={18} />
+          </Button>
+        </Link>
+      </div>
       <div className="grid gap-4">
         {downloadedContent.map((content) => (
           <div
