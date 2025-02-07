@@ -100,11 +100,17 @@ const Store = () => {
   const [selectedType, setSelectedType] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("newest");
   const [showUploadDialog, setShowUploadDialog] = useState(false);
-  const [newProduct, setNewProduct] = useState({
+  const [newProduct, setNewProduct] = useState<{
+    title: string;
+    description: string;
+    price: number;
+    type: "PDF" | "MP3" | "Software";
+    imageUrl: string;
+  }>({
     title: "",
     description: "",
     price: 0,
-    type: "PDF" as const,
+    type: "PDF",
     imageUrl: "",
   });
 
@@ -368,4 +374,3 @@ const Store = () => {
 };
 
 export default Store;
-
