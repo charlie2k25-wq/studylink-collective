@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { ShoppingCart, Search, Filter, Heart, Upload, Star, StarHalf } from "lucide-react";
+import { ShoppingCart, Search, Filter, Heart, Upload, Star, StarHalf, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -19,14 +18,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { useNavigate } from "react-router-dom";
 
 interface Product {
   id: string;
   title: string;
   description: string;
   price: number;
+  currency: string;
   type: "PDF" | "MP3" | "Software";
   imageUrl: string;
+  mediaUrl: string;
   rating: number;
   downloads: number;
   reviews: Review[];
@@ -44,14 +46,20 @@ interface Review {
   createdAt: string;
 }
 
+interface CartItem extends Product {
+  quantity: number;
+}
+
 const sampleProducts: Product[] = [
   {
     id: "1",
     title: "Digital Marketing Guide",
     description: "Comprehensive guide for modern marketing strategies",
     price: 29.99,
+    currency: "USD",
     type: "PDF",
     imageUrl: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    mediaUrl: "https://example.com/marketing-guide.pdf",
     rating: 4.5,
     downloads: 120,
     authorId: "auth1",
@@ -73,8 +81,10 @@ const sampleProducts: Product[] = [
     title: "Productivity Music Pack",
     description: "Focus-enhancing background music collection",
     price: 19.99,
+    currency: "USD",
     type: "MP3",
     imageUrl: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
+    mediaUrl: "https://example.com/music-pack.mp3",
     rating: 4.8,
     downloads: 250,
     authorId: "auth2",
@@ -94,32 +104,78 @@ const sampleProducts: Product[] = [
 ];
 
 const Store = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState([0, 100]);
   const [selectedType, setSelectedType] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("newest");
   const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showCart, setShowCart] = useState(false);
   const [newProduct, setNewProduct] = useState<{
     title: string;
     description: string;
     price: number;
+    currency: string;
     type: "PDF" | "MP3" | "Software";
-    imageUrl: string;
+    imageFile: File | null;
+    mediaFile: File | null;
+    imagePreview: string;
   }>({
     title: "",
     description: "",
     price: 0,
+    currency: "USD",
     type: "PDF",
-    imageUrl: "",
+    imageFile: null,
+    mediaFile: null,
+    imagePreview: "",
   });
 
-  const handlePurchase = (productId: string) => {
-    toast.success("Purchase successful! Download starting...");
-    // Simulate download start
-    setTimeout(() => {
-      toast.info("Download complete!");
-    }, 2000);
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewProduct({
+        ...newProduct,
+        imageFile: file,
+        imagePreview: URL.createObjectURL(file),
+      });
+    }
+  };
+
+  const handleMediaUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewProduct({
+        ...newProduct,
+        mediaFile: file,
+      });
+      toast.success("Media file selected successfully!");
+    }
+  };
+
+  const handlePurchase = (product: Product) => {
+    const existingItem = cart.find(item => item.id === product.id);
+    if (existingItem) {
+      setCart(cart.map(item => 
+        item.id === product.id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setCart([...cart, { ...product, quantity: 1 }]);
+    }
+    toast.success("Added to cart!");
+  };
+
+  const handleCheckout = () => {
+    navigate("/checkout", { state: { cart } });
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCart(cart.filter(item => item.id !== productId));
+    toast.success("Removed from cart!");
   };
 
   const toggleWishlist = (productId: string) => {
@@ -131,10 +187,13 @@ const Store = () => {
     toast.success("Wishlist updated!");
   };
 
+  const handleReview = (productId: string, rating: number, comment: string) => {
+    toast.success("Review submitted successfully!");
+  };
+
   const handleUpload = () => {
-    // Validate form
-    if (!newProduct.title || !newProduct.description || !newProduct.price) {
-      toast.error("Please fill in all required fields");
+    if (!newProduct.title || !newProduct.description || !newProduct.price || !newProduct.imageFile || !newProduct.mediaFile) {
+      toast.error("Please fill in all required fields and upload both image and media files");
       return;
     }
     
@@ -145,13 +204,12 @@ const Store = () => {
       title: "",
       description: "",
       price: 0,
+      currency: "USD",
       type: "PDF",
-      imageUrl: "",
+      imageFile: null,
+      mediaFile: null,
+      imagePreview: "",
     });
-  };
-
-  const handleReview = (productId: string, rating: number, comment: string) => {
-    toast.success("Review submitted successfully!");
   };
 
   const filteredProducts = sampleProducts
@@ -204,7 +262,7 @@ const Store = () => {
                 Upload Product
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Upload Digital Product</DialogTitle>
               </DialogHeader>
@@ -219,12 +277,28 @@ const Store = () => {
                   value={newProduct.description}
                   onChange={(e) => setNewProduct({...newProduct, description: e.target.value})}
                 />
-                <Input
-                  type="number"
-                  placeholder="Price"
-                  value={newProduct.price}
-                  onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
-                />
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Price"
+                    value={newProduct.price}
+                    onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
+                    className="flex-1"
+                  />
+                  <Select
+                    value={newProduct.currency}
+                    onValueChange={(value) => setNewProduct({...newProduct, currency: value})}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue placeholder="Currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">USD</SelectItem>
+                      <SelectItem value="EUR">EUR</SelectItem>
+                      <SelectItem value="GBP">GBP</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Select
                   value={newProduct.type}
                   onValueChange={(value: "PDF" | "MP3" | "Software") => 
@@ -240,21 +314,97 @@ const Store = () => {
                     <SelectItem value="Software">Software</SelectItem>
                   </SelectContent>
                 </Select>
-                <Input
-                  placeholder="Image URL"
-                  value={newProduct.imageUrl}
-                  onChange={(e) => setNewProduct({...newProduct, imageUrl: e.target.value})}
-                />
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">Product Image</label>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
+                  {newProduct.imagePreview && (
+                    <img
+                      src={newProduct.imagePreview}
+                      alt="Preview"
+                      className="mt-2 rounded-lg max-h-32 object-cover"
+                    />
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium">Product File</label>
+                  <Input
+                    type="file"
+                    accept=".pdf,.mp3,.zip"
+                    onChange={handleMediaUpload}
+                  />
+                </div>
                 <Button onClick={handleUpload} className="w-full">
                   Upload Product
                 </Button>
               </div>
             </DialogContent>
           </Dialog>
-          <ShoppingCart className="h-6 w-6" />
+          <Button
+            variant="outline"
+            onClick={() => setShowCart(true)}
+            className="relative"
+          >
+            <ShoppingCart className="h-6 w-6" />
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                {cart.length}
+              </span>
+            )}
+          </Button>
         </div>
       </div>
-      
+
+      {/* Cart Dialog */}
+      <Dialog open={showCart} onOpenChange={setShowCart}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Shopping Cart</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {cart.length === 0 ? (
+              <p>Your cart is empty</p>
+            ) : (
+              <>
+                {cart.map((item) => (
+                  <div key={item.id} className="flex items-center justify-between gap-4 p-2 border rounded">
+                    <div className="flex items-center gap-2">
+                      <img src={item.imageUrl} alt={item.title} className="w-12 h-12 object-cover rounded" />
+                      <div>
+                        <p className="font-medium">{item.title}</p>
+                        <p className="text-sm text-muted-foreground">${item.price}</p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeFromCart(item.id)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+                <div className="flex justify-between items-center pt-4 border-t">
+                  <div>
+                    <p className="text-lg font-medium">Total:</p>
+                    <p className="text-sm text-muted-foreground">
+                      ${cart.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)}
+                    </p>
+                  </div>
+                  <Button onClick={handleCheckout}>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Checkout
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Search and Filter Section */}
       <div className="space-y-4">
         <div className="flex gap-4">
@@ -361,8 +511,8 @@ const Store = () => {
                     </p>
                   </div>
                 )}
-                <Button onClick={() => handlePurchase(product.id)} className="w-full">
-                  Buy Now
+                <Button onClick={() => handlePurchase(product)} className="w-full">
+                  Add to Cart
                 </Button>
               </div>
             </div>
