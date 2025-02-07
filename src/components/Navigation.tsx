@@ -1,6 +1,7 @@
+
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Headphones, BookOpen, Settings } from "lucide-react";
+import { Home, Headphones, BookOpen, MessageSquare } from "lucide-react";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +11,7 @@ const Navigation = () => {
     { icon: Home, label: "Home", path: "/" },
     { icon: Headphones, label: "Podcasts", path: "/podcasts" },
     { icon: BookOpen, label: "Library", path: "/library" },
-    { icon: Settings, label: "Settings", path: "/settings" },
+    { icon: MessageSquare, label: "Forum", path: "/forum" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -24,7 +25,7 @@ const Navigation = () => {
             <Link
               key={path}
               to={path}
-              className={`flex flex-col items-center space-y-1 transition-colors rounded-xl p-2 ${
+              className={`flex flex-col items-center space-y-1 transition-colors rounded-full p-3 ${
                 isActive(path)
                   ? "bg-primary text-primary-foreground"
                   : "bg-[#9b87f5] text-white hover:bg-[#7E69AB]"
