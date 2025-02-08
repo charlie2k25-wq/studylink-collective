@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Headphones, BookOpen, MessageSquare } from "lucide-react";
+import { Home, Headphones, BookOpen, MessageSquare, User } from "lucide-react";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +12,7 @@ const Navigation = () => {
     { icon: Headphones, label: "Podcasts", path: "/podcasts" },
     { icon: BookOpen, label: "Library", path: "/library" },
     { icon: MessageSquare, label: "Forum", path: "/forum" },
+    { icon: User, label: "Account", path: "/profile" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -20,19 +21,36 @@ const Navigation = () => {
     <>
       {/* Mobile Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden">
-        <nav className="bg-background/95 backdrop-blur-sm border-t px-4 py-2 flex justify-around items-center">
+        <nav className="bg-white border-t px-4 py-2 flex justify-around items-center shadow-lg">
           {navItems.map(({ icon: Icon, label, path }) => (
             <Link
               key={path}
               to={path}
-              className={`flex flex-col items-center space-y-0.5 transition-colors rounded-full p-2 ${
-                isActive(path)
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-[#403E43] text-white hover:bg-[#8A898C]"
-              }`}
+              className="flex flex-col items-center space-y-1 relative w-16 py-2"
             >
-              <Icon size={16} />
-              <span className="text-[10px]">{label}</span>
+              {isActive(path) && (
+                <div 
+                  className="absolute inset-0 bg-primary/10 rounded-full -z-10"
+                  style={{ transform: 'scale(0.85)' }}
+                />
+              )}
+              <Icon 
+                size={20} 
+                className={`transition-colors ${
+                  isActive(path) 
+                    ? "text-primary" 
+                    : "text-gray-500"
+                }`}
+              />
+              <span 
+                className={`text-xs transition-colors ${
+                  isActive(path)
+                    ? "text-primary font-medium"
+                    : "text-gray-500"
+                }`}
+              >
+                {label}
+              </span>
             </Link>
           ))}
         </nav>
@@ -46,15 +64,15 @@ const Navigation = () => {
             <span className="font-semibold">EduPod</span>
           </div>
           
-          <div className="space-y-4">
+          <div className="space-y-2">
             {navItems.map(({ icon: Icon, label, path }) => (
               <Link
                 key={path}
                 to={path}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
                   isActive(path)
                     ? "bg-primary text-primary-foreground"
-                    : "hover:bg-secondary"
+                    : "hover:bg-secondary text-gray-500 hover:text-gray-900"
                 }`}
               >
                 <Icon size={20} />
@@ -69,3 +87,4 @@ const Navigation = () => {
 };
 
 export default Navigation;
+
