@@ -60,12 +60,27 @@ const Library = () => {
     });
   };
 
+  const renderStars = (rating: number) => {
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push(<Star key={`full-${i}`} className="h-4 w-4 fill-yellow-400 text-yellow-400" />);
+    }
+    if (hasHalfStar) {
+      stars.push(<Star key="half" className="h-4 w-4 fill-yellow-400 text-yellow-400" />);
+    }
+
+    return <div className="flex">{stars}</div>;
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Search Bar */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pb-4">
+    <div className="space-y-4 pb-16 lg:pb-0">
+      {/* Search Bar and Categories */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pb-4 space-y-4">
         <div className="relative">
-          <Search className="absolute left-3 top-3 text-muted-foreground" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search for books & resources..."
             value={searchTerm}
@@ -74,8 +89,7 @@ const Library = () => {
           />
         </div>
 
-        {/* Category Tabs */}
-        <Tabs defaultValue={activeTab} className="mt-4">
+        <Tabs defaultValue={activeTab} className="w-full">
           <TabsList className="w-full justify-start overflow-x-auto">
             {categories.map((category) => (
               <TabsTrigger
@@ -93,50 +107,51 @@ const Library = () => {
       {/* Main Content */}
       {sections.map((section) => (
         <section key={section} className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold">{section}</h2>
-            <Button variant="ghost" className="flex items-center">
+          <div className="flex items-center justify-between px-2">
+            <h2 className="text-lg font-semibold md:text-xl">{section}</h2>
+            <Button variant="ghost" className="flex items-center text-sm">
               See all <ChevronRight className="ml-1 h-4 w-4" />
             </Button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-3 px-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {sampleBooks.map((book) => (
               <motion.div
                 key={book.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
+                className="group"
               >
-                <Card className="group hover:shadow-lg transition-shadow">
-                  <CardHeader className="p-0">
-                    <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
-                      <img
-                        src={book.coverUrl}
-                        alt={book.title}
-                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <Button size="icon" variant="ghost" className="text-white">
-                          <BookOpen className="h-5 w-5" />
-                        </Button>
-                        <Button 
-                          size="icon" 
-                          variant="ghost" 
-                          className="text-white"
-                          onClick={() => handleWishlist(book)}
-                        >
-                          <Bookmark className="h-5 w-5" />
-                        </Button>
-                      </div>
+                <Card className="h-full overflow-hidden">
+                  <div className="relative aspect-[3/4]">
+                    <img
+                      src={book.coverUrl}
+                      alt={book.title}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-2 top-2 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm"
+                      onClick={() => handleWishlist(book)}
+                    >
+                      <Bookmark className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <CardContent className="space-y-2 p-3">
+                    <div>
+                      <h3 className="line-clamp-1 font-medium">{book.title}</h3>
+                      <p className="line-clamp-1 text-xs text-muted-foreground">
+                        {book.author}
+                      </p>
                     </div>
-                  </CardHeader>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold truncate">{book.title}</h3>
-                    <p className="text-sm text-muted-foreground truncate">{book.author}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm">{book.rating}</span>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-primary">
+                        {book.format}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        {renderStars(book.rating)}
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -150,3 +165,4 @@ const Library = () => {
 };
 
 export default Library;
+
