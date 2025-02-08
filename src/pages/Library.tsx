@@ -1,9 +1,12 @@
+
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Upload, BookOpen, Star, ThumbsUp, MessageSquare, Share2, Bookmark } from "lucide-react";
+import { Search, ChevronRight, Star, ThumbsUp, MessageSquare, Share2, Bookmark, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Book {
   id: string;
@@ -42,105 +45,106 @@ const sampleBooks: Book[] = [
   }
 ];
 
+const categories = ["For You", "Top Charts", "Categories", "Editor's Choice"];
+const sections = ["Recommended for you", "New & Updated", "Popular Books", "Trending Now"];
+
 const Library = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState("For You");
+  const { toast } = useToast();
 
-  const filteredBooks = sampleBooks.filter(book => {
-    const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         book.author.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || book.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const categories = Array.from(new Set(sampleBooks.map(book => book.category)));
+  const handleWishlist = (book: Book) => {
+    toast({
+      title: "Added to Wishlist",
+      description: `${book.title} has been added to your wishlist`
+    });
+  };
 
   return (
-    <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex justify-between items-center"
-      >
-        <h1 className="text-3xl font-bold">Library</h1>
-        <Button>
-          <Upload className="mr-2" />
-          Upload Book
-        </Button>
-      </motion.div>
-
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
+    <div className="space-y-6">
+      {/* Search Bar */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pb-4">
+        <div className="relative">
           <Search className="absolute left-3 top-3 text-muted-foreground" />
           <Input
-            placeholder="Search books by title or author..."
+            placeholder="Search for books & resources..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
-        <div className="flex gap-2 flex-wrap">
-          {categories.map(category => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              onClick={() => setSelectedCategory(selectedCategory === category ? null : category)}
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
+
+        {/* Category Tabs */}
+        <Tabs defaultValue={activeTab} className="mt-4">
+          <TabsList className="w-full justify-start overflow-x-auto">
+            {categories.map((category) => (
+              <TabsTrigger
+                key={category}
+                value={category}
+                onClick={() => setActiveTab(category)}
+              >
+                {category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredBooks.map((book) => (
-          <motion.div
-            key={book.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Card>
-              <CardHeader>
-                <div className="aspect-[3/4] relative mb-4 rounded-lg overflow-hidden">
-                  <img
-                    src={book.coverUrl}
-                    alt={book.title}
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-                <CardTitle>{book.title}</CardTitle>
-                <CardDescription>by {book.author}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">{book.description}</p>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <BookOpen className="h-4 w-4" />
-                  <span>{book.format}</span>
-                  <Star className="h-4 w-4 ml-2" />
-                  <span>{book.rating}</span>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon">
-                    <ThumbsUp className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon">
-                    <MessageSquare className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="icon">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <Button variant="ghost" size="icon">
-                  <Bookmark className="h-4 w-4" />
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
+      {/* Main Content */}
+      {sections.map((section) => (
+        <section key={section} className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">{section}</h2>
+            <Button variant="ghost" className="flex items-center">
+              See all <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {sampleBooks.map((book) => (
+              <motion.div
+                key={book.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className="group hover:shadow-lg transition-shadow">
+                  <CardHeader className="p-0">
+                    <div className="aspect-[3/4] relative overflow-hidden rounded-t-lg">
+                      <img
+                        src={book.coverUrl}
+                        alt={book.title}
+                        className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        <Button size="icon" variant="ghost" className="text-white">
+                          <BookOpen className="h-5 w-5" />
+                        </Button>
+                        <Button 
+                          size="icon" 
+                          variant="ghost" 
+                          className="text-white"
+                          onClick={() => handleWishlist(book)}
+                        >
+                          <Bookmark className="h-5 w-5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold truncate">{book.title}</h3>
+                    <p className="text-sm text-muted-foreground truncate">{book.author}</p>
+                    <div className="flex items-center gap-1 mt-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm">{book.rating}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
   );
 };
